@@ -65,11 +65,8 @@ corepack pnpm tauri:build
 
 ## GitHub 데스크톱 릴리스
 
-`package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml`의 버전을 동일하게 맞춘 뒤 같은 버전의 태그를 푸시합니다.
+`main` 브랜치에 커밋을 푸시하면 `.github/workflows/desktop-release.yml`이 자동으로 전체 검증을 수행한 뒤 Windows `-setup.exe`를 빌드해 GitHub Releases에 공개합니다. 별도의 태그 생성은 필요하지 않습니다.
 
-```bash
-git tag desktop-v0.1.0
-git push origin desktop-v0.1.0
-```
+릴리스 태그는 `desktop-v<앱 버전>-build.<실행 번호>.<재시도 번호>` 형식으로 자동 생성되므로 같은 앱 버전으로 여러 번 푸시해도 충돌하지 않습니다. 새 정식 버전을 배포할 때는 `package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml`의 버전을 동일하게 맞춥니다.
 
-`.github/workflows/desktop-release.yml`이 테스트 후 Windows `-setup.exe`를 빌드해 GitHub Releases에 공개합니다. 서명하지 않은 초기 설치 파일은 Windows SmartScreen에서 알 수 없는 게시자 경고가 표시될 수 있습니다.
+Pull Request에서는 `.github/workflows/ci.yml`이 별도로 검증하며, 필요한 경우 두 워크플로 모두 GitHub Actions 화면에서 수동 실행할 수 있습니다. 서명하지 않은 초기 설치 파일은 Windows SmartScreen에서 알 수 없는 게시자 경고가 표시될 수 있습니다.

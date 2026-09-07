@@ -2,12 +2,15 @@ name: Desktop release (Windows)
 
 on:
   push:
-    tags:
-      - 'desktop-v*'
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
-  group: desktop-release-${{ github.ref }}
-  cancel-in-progress: false
+  group: desktop-release-main
+  cancel-in-progress: true
 
 jobs:
   verify:
@@ -58,33 +61,43 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Verify release version
+      - name: Verify versions and prepare release
+        id: release
         shell: pwsh
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
         run: |
+          $ErrorActionPreference = 'Stop'
           $packageVersion = (Get-Content package.json -Raw -Encoding utf8 | ConvertFrom-Json).version
           $tauriVersion = (Get-Content src-tauri/tauri.conf.json -Raw -Encoding utf8 | ConvertFrom-Json).version
           $cargoVersionMatch = Select-String -Path src-tauri/Cargo.toml -Pattern '^version = "([^"]+)"' | Select-Object -First 1
+
+          if (-not $cargoVersionMatch) {
+            throw 'Could not read the package version from src-tauri/Cargo.toml.'
+          }
+
           $cargoVersion = $cargoVersionMatch.Matches[0].Groups[1].Value
-          $expectedTag = "desktop-v$packageVersion"
 
           if ($packageVersion -ne $tauriVersion -or $packageVersion -ne $cargoVersion) {
             throw "Version mismatch: package=$packageVersion, Tauri=$tauriVersion, Cargo=$cargoVersion."
           }
 
-          if ($env:RELEASE_TAG -ne $expectedTag) {
-            throw "Expected tag '$expectedTag', got '$env:RELEASE_TAG'."
-          }
+          $buildId = '${{ github.run_number }}.${{ github.run_attempt }}'
+          $releaseTag = "desktop-v$packageVersion-build.$buildId"
+          $releaseName = "Receiptly v$packageVersion (build $buildId)"
+
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "tag=$releaseTag" -Encoding utf8
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "name=$releaseName" -Encoding utf8
 
       - name: Build and publish NSIS installer
         uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: 'Receiptly ${{ github.ref_name }}'
-          releaseBody: 'Windows에서는 -setup.exe 설치 파일을 내려받아 실행하세요.'
+          tagName: ${{ steps.release.outputs.tag }}
+          releaseName: ${{ steps.release.outputs.name }}
+          releaseCommitish: ${{ github.sha }}
+          releaseBody: |
+            main 브랜치에서 자동으로 빌드된 Windows 설치 파일입니다.
+            Windows에서는 -setup.exe 파일을 내려받아 실행하세요.
           generateReleaseNotes: true
           releaseDraft: false
           prerelease: false

@@ -29,6 +29,7 @@ import type {
 } from './domain/types'
 import { calculateLayout } from './lib/layout'
 import { savePdfBuffer, usesNativePdfSave } from './lib/pdf-save'
+import { arrangeReceipts, type ReceiptArrangement } from './lib/receipt-order'
 import { DocumentWorkerClient } from './lib/worker-client'
 import './styles.css'
 
@@ -325,6 +326,10 @@ export default function App() {
     })
   }, [updateReceipts])
 
+  const arrangeReceiptOrder = useCallback((arrangement: ReceiptArrangement) => {
+    updateReceipts((current) => arrangeReceipts(current, arrangement))
+  }, [updateReceipts])
+
   const resetDocument = useCallback(() => {
     if (isDirty && !window.confirm('작성 중인 내용을 모두 지우고 새 문서를 시작할까요?')) return
     if (operationRef.current) cancelOperation()
@@ -520,7 +525,6 @@ export default function App() {
                 <p className="section-kicker">STEP 3</p>
                 <h2 id="receipt-editor-heading">배치와 설명</h2>
               </div>
-              {receipts.length > 1 && <span className="reorder-help">끌어서 순서 변경</span>}
             </div>
 
             <div className="auto-layout-note">
@@ -535,6 +539,7 @@ export default function App() {
               receipts={receipts}
               warnings={manifest.warnings}
               onReorder={reorderReceipts}
+              onArrange={arrangeReceiptOrder}
               onMove={moveReceipt}
               onDelete={removeReceipt}
               onRotate={(id) => {

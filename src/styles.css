@@ -322,8 +322,7 @@ input:disabled {
   letter-spacing: -0.025em;
 }
 
-.required-note,
-.reorder-help {
+.required-note {
   padding-top: 13px;
   color: #8792a2;
   font-size: 10.5px;
@@ -568,6 +567,229 @@ input:disabled {
 .receipt-list {
   display: grid;
   gap: 10px;
+}
+
+.receipt-order-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 11px;
+}
+
+.receipt-sort-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.receipt-sort-label {
+  margin-right: 3px;
+  color: #8792a2;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.order-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #dde4eb;
+  border-radius: 8px;
+  color: #4a5668;
+  background: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 130ms ease, border-color 130ms ease, background 130ms ease;
+}
+
+.order-chip:hover {
+  border-color: #c6d1dc;
+  color: #293445;
+  background: #f8fafc;
+}
+
+.order-chip:active {
+  transform: translateY(1px);
+}
+
+.order-chip--accent {
+  border-color: #c4d8f6;
+  color: #2f62a8;
+  background: #f5f9ff;
+}
+
+.order-chip--accent:hover {
+  border-color: #9fbfee;
+  color: #24508f;
+  background: #eaf2fc;
+}
+
+.order-chip--primary {
+  border-color: var(--blue-600);
+  color: #fff;
+  background: var(--blue-600);
+}
+
+.order-chip--primary:hover {
+  border-color: var(--blue-700);
+  color: #fff;
+  background: var(--blue-700);
+}
+
+.receipt-order-hint {
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 9px;
+  color: #4a6c99;
+  background: #f5f9ff;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.receipt-order-hint--touch {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .receipt-order-hint--pointer {
+    display: none;
+  }
+
+  .receipt-order-hint--touch {
+    display: inline;
+  }
+}
+
+.receipt-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.receipt-tile {
+  min-width: 0;
+}
+
+.receipt-tile-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  height: 100%;
+  padding: 6px 6px 7px;
+  border: 1px solid #dde4eb;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.035);
+  cursor: grab;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  transition: border-color 130ms ease, box-shadow 130ms ease;
+}
+
+.receipt-tile-body:hover {
+  border-color: #9fbfee;
+  box-shadow: 0 4px 12px rgb(15 23 42 / 0.07);
+}
+
+.receipt-tile-body:focus-visible {
+  outline: 2px solid var(--blue-500);
+  outline-offset: 2px;
+}
+
+.receipt-tile--error .receipt-tile-body {
+  border-color: #f1c9cb;
+  background: #fffbfb;
+}
+
+.receipt-tile--placeholder .receipt-tile-body {
+  border-style: dashed;
+  border-color: #9fbfee;
+  background: #f5f9ff;
+  box-shadow: none;
+}
+
+.receipt-tile--placeholder .receipt-tile-body > * {
+  opacity: 0.25;
+}
+
+.receipt-tile--overlay {
+  height: 100%;
+}
+
+.receipt-tile--overlay .receipt-tile-body {
+  border-color: #84aef0;
+  box-shadow: 0 15px 32px rgb(15 23 42 / 0.18);
+  cursor: grabbing;
+  transform: scale(1.05);
+}
+
+.receipt-tile-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 6px;
+  color: #a0aabb;
+  background-color: #eef1f4;
+  background-image:
+    linear-gradient(45deg, #e8ecf0 25%, transparent 25%),
+    linear-gradient(-45deg, #e8ecf0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e8ecf0 75%),
+    linear-gradient(-45deg, transparent 75%, #e8ecf0 75%);
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  background-size: 8px 8px;
+}
+
+.receipt-tile-thumb img {
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgb(15 23 42 / 0.16));
+  pointer-events: none;
+}
+
+.receipt-tile-number {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  color: #fff;
+  background: var(--blue-600);
+  box-shadow: 0 1px 4px rgb(15 23 42 / 0.18);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.receipt-tile-date {
+  color: #6d7a8b;
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .receipt-card {
